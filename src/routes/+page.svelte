@@ -19,11 +19,11 @@
 			<h2>Important Info</h2></a
 		>
 		<a href="/test"
-			><img src="images\Toasty.webp" alt="Toasty" />
+			><img src="/images/Toasty.webp" alt="Toasty" />
 			<h2>I take a toast!</h2></a
 		>
 		<a href="/test"
-			><img src="images\Kitty.webp" alt="Kitty" />
+			><img src="/images/Kitty.webp" alt="Kitty" />
 			<h2>Hello kitty..?</h2></a
 		>
 	</div>
@@ -31,7 +31,7 @@
 
 <section class="sec3">
 	<div class="sec3_div">
-		<a href="#">Discover the Advantages!</a>
+		<a href="/">Discover the Advantages!</a>
 	</div>
 </section>
 
@@ -88,7 +88,7 @@
 	.sec3_div {
 		width: 100vw;
 		height: 200px;
-		background: transparent no-repeat url('images/section3.webp') center center / cover;
+		background: transparent no-repeat url('/images/section3.webp') center center / cover;
 		min-height: 27vw;
 	}
 
