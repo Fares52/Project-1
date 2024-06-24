@@ -36,3 +36,16 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+
+IMPORTANT BUG THAT WAS EXPERIENCED WITH THE FORM SUBMISSION : 
+
+"Cross-site POST form submissions are forbidden"
+
+you have to add ->  ORIGIN=http://localhost:3000 node build/index.js
+to ur .env files
+
+and then in vercel > project > settings > general > project settings > chaange the development command to vite --port 3000
+
+now vercel dev should work without getting that stupid error 
+
+This is where i found solution : https://github.com/orgs/vercel/discussions/3390

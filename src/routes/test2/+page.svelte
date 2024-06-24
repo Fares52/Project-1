@@ -5,32 +5,45 @@
 <section>
     <h1>Big hungry or small hungry? 🍔</h1>
 
-    
-	<div class="container">
+    <div class="container">
         <button class="smallCard">
             <div class="info">hi</div>
             <div class="bigCard">Lorem ipsum dolor sit amet consectetur, adipisicing elit.</div>
         </button>
+<!-- 
+        {#if foods.length > 0}
+            {#each foods as food}
+                <button class="smallCard">
+                    <div class="info">{food.info}</div>
+                    <div class="bigCard">{food.text}</div>
+                </button>
+            {/each}
+        {:else}
+            <h1>No foods found</h1>
+        {/if} -->
     </div>
 
-    <form method="post">
-        <input type="text" name="info" placeholder="Food Info" required>
-        <input type="text" name="text" placeholder="Food Text" required>
+    <form >
+        <input type="text"  placeholder="Food Info" required>
+        <input type="text"  placeholder="Food Text" required>
         <button type="submit">Add Food</button>
     </form>
+	
+<h1>Read!</h1>
+<div class="read-wrapper">
+    <div class="read-content">
+        {#if data?.foods}
+        {#each data?.foods as food}
+            <h1>food # {`${food.id} Info:${food.info} ,${food.text}`}!</h1>
+        {/each}
     
-    <h1>Read!</h1>
-    <div class="read-wrapper">
-        <div class="read-content">
-            {#if data?.foods}
-                {#each data?.foods as food}
-                    <h1>food # {`${food.id} Info:${food.info} ,${food.text}`}!</h1>
-                {/each}
-            {:else}
-                <h1>Error getting food</h1>
-            {/if}
-        </div>
+    
+    {:else}
+        <h1>Error getting food</h1>
+    {/if}
     </div>
+</div>
+
 </section>
 
 <style>
