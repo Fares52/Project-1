@@ -16,6 +16,12 @@
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
+		"@smui/button": "^7.0.0",
+		"@smui/card": "^7.0.0",
+		"@smui/data-table": "^7.0.0",
+		"@smui/dialog": "^7.0.0",
+		"@smui/linear-progress": "^7.0.0",
+		"@smui/textfield": "^7.0.0",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/adapter-vercel": "^5.3.2",
 		"@sveltejs/enhanced-img": "^0.2.1",

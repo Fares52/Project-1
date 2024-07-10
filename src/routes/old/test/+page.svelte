@@ -1,19 +1,44 @@
 <script>
     export let data;
+    let selectedIds = new Set();
+
+    function handleCheckboxChange(event, id) {
+        if (event.target.checked) {
+            selectedIds.add(id);
+        } else {
+            selectedIds.delete(id);
+        }
+    }
+
+    async function handleDelete() {
+        if (selectedIds.size === 0) return;
+
+        const confirmed = confirm('Are you sure you want to delete the selected items?');
+        if (!confirmed) return;
+
+        const formData = new FormData();
+        selectedIds.forEach(id => formData.append('ids', id));
+
+        await fetch('/test', {
+            method: 'POST',
+            body: formData
+        });
+
+        window.location.reload(); // Reload to see changes
+    }
 </script>
 
 <section>
     <h1>Big hungry or small hungry? 🍔</h1>
-
     
-	<div class="container">
+    <div class="container">
         <button class="smallCard">
             <div class="info">hi</div>
             <div class="bigCard">Lorem ipsum dolor sit amet consectetur, adipisicing elit.</div>
         </button>
     </div>
 
-    <form method="post">
+    <form method="post" action="?/create">
         <input type="text" name="info" placeholder="Food Info" required>
         <input type="text" name="text" placeholder="Food Text" required>
         <button type="submit">Add Food</button>
@@ -23,8 +48,12 @@
     <div class="read-wrapper">
         <div class="read-content">
             {#if data?.foods}
+                <button type="submit"on:click={handleDelete} > Delete Selected </button>
                 {#each data?.foods as food}
-                    <h1>food # {`${food.id} Info:${food.info} ,${food.text}`}!</h1>
+                    <div>
+                        <input type="checkbox" on:change={(event) => handleCheckboxChange(event, food.id)}>
+                        <span>id   {`${food.id} Info: ${food.info} ,${food.text}`}</span>
+                    </div>
                 {/each}
             {:else}
                 <h1>Error getting food</h1>

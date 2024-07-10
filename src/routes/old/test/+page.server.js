@@ -1,6 +1,5 @@
 import { createPool } from '@vercel/postgres';
 import { POSTGRES_URL } from '$env/static/private';
-import { redirect } from '@sveltejs/kit';
 
 const pool = createPool({
     connectionString: POSTGRES_URL,
@@ -12,16 +11,36 @@ export async function load() {
 }
 
 export const actions = {
-    default: async ({ request }) => {  // Change 'create' to 'default'
+    create: async ({ request }) => {
         const form = await request.formData();
         const info = form.get('info');
         const text = form.get('text');
 
         try {
             await pool.query('INSERT INTO foods (info, text) VALUES ($1, $2)', [info, text]);
+            return { success: true };
+        } catch (error) {
+            if (error instanceof Error) {
+                return {
+                    error: true,
+                    message: error.message,
+                };
+            } else {
+                return {
+                    error: true,
+                    message: 'Unknown error occurred',
+                };
+            }
+        }
+    },
 
-            // Redirect after successful creation to avoid form resubmission issues
-            throw redirect(303, '/test');
+    delete: async ({ request }) => {
+        const form = await request.formData();
+        const id = form.get('id');
+
+        try {
+            await pool.query('DELETE FROM foods WHERE id = $1', [id]);
+            return { success: true };
         } catch (error) {
             if (error instanceof Error) {
                 return {

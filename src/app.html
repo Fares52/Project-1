@@ -4,6 +4,7 @@
 <head>
 	<meta charset="utf-8" />
 	<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+	<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/svelte-material-ui@6.0.0/bare.min.css" /> -->
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	%sveltekit.head%
 </head>
@@ -24,21 +25,32 @@
 		margin: 0px;
 		position: relative;
 	} */
-	 
-	*{
+
+	/* below makes rem units easier to use 1rem = 10px */
+	 html{
+		font-size: 62.5%;
+	 }
+	 body{
+		font-size: 1.6rem;
+	 }
+
+	* {
 		margin: 0px;
 		padding: 0px;
 		box-sizing: border-box;
+		text-decoration: none;
+		list-style: none;
 	}
 
-	html{
-		/* scrollbar-width: thin;
-		scrollbar-color: rgba(255, 217, 0, 0.782) rgb(21, 21, 21); */
+	html {
+		overflow-x: hidden;
+		scroll-behavior: smooth;
+		scrollbar-width: thin;
+		scrollbar-color: #d5b602 rgba(232, 232, 232, 0.342);
 		/* mask-image: linear-gradient(180deg,#0000 0,#000 3rem calc(100% - 3rem),#0000);
 		background-color: black; */
 
 	}
-	
 </style>
 
 </html>

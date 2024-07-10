@@ -1,17 +1,46 @@
 	/* To add font, get it from google fonts, the in https://www.fontsquirrel.com/tools/webfont-generator
-    you can make the font much fasster and woff format so it works ! and then just use @font-face */
+    you can make the font much fasster and woff format so it works ! and then just use @font-face 
+	also need to add @import url('../app.css'); to the style of the +layout.svelte file otherwise wont work
+	*/
 
 	@font-face {
         font-display: swap; 
 		font-family: 'RobotoCondensed';
-		font-style: normal;
-		font-weight: 400;
 		src: url('$lib/fonts/RobotoCondensed.woff') format('woff');
 	}
 	@font-face{
         font-display: swap;
 		font-family: 'Poe';
-		font-style: normal;
-		font-weight: 400;
 		src: url('$lib/fonts/poe.woff') format('woff');
+	}
+
+	@font-face {
+		font-display: swap;
+		font-family: 'ITCAvantGardeStd';
+		src: url('$lib/fonts/ITCAvantGardeStd-Bk.woff') format('woff');
+	}
+
+	@font-face {
+		font-display: swap;
+		font-family: 'coco-gothic';
+		src: url('$lib/fonts/RobotoCondensed.woff') format('woff');
+	}
+
+	@font-face {
+		font-display: swap;
+		font-family: 'fingerpaint';
+		src: url('$lib/fonts/fingerpaint-regular-webfont.woff2') format('woff2');
+	}
+
+	@font-face {
+		font-display: swap;
+		font-family: 'catchymager';
+		src: url('$lib/fonts/catchymager-webfont.woff2') format('woff2');
+		font-weight: lighter;
+	}
+
+	@font-face {
+		font-display: swap;
+		font-family: 'bethellen';
+		src: url('$lib/fonts/bethellen-webfont.woff2') format('woff2');
 	}
