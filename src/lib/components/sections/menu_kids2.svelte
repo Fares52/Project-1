@@ -12,7 +12,7 @@
 		/> -->
 		<enhanced:img
 			class="imgPhone"
-			src="$lib/images/menu/kid/glued/kidsMenuPhone.webp"
+			src="$lib/images/menu/kid/glued/KidsMenuPhone.webp"
 			alt="Kids Menu"
 		/>
 	</div>
