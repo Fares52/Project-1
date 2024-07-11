@@ -33,6 +33,7 @@
 <About />
 <Maps />
 <Footer />
+
 <style>
 	section {
 		width: 100%;
@@ -120,16 +121,93 @@
 		font-weight: bolder;
 	}
 
-	@media only screen and (max-width: 600px) {
+	@media only screen and (max-width: 1212px) {
 		section {
-			height: 30vh;
+			height: 100vh;
+		}
+		p {
+			font-size: 1.5rem;
+		}
+		h1{
+			font-size: 10rem;
+		}
+		h2{
+			font-size: 3.5rem;
+		}
+		.nav{
+			scale: 0.8;
 		}
 	}
-	/* .bg1{
-        width: 100vw;
-        height: 100vh;
-        position: absolute;
-        z-index: -1;
-        top: 0px;
-    } */
+
+	@media only screen and (max-width: 812px) {
+		section {
+			height: 100vh;
+		}
+		p {
+			font-size: 1.3rem;
+		}
+		h1{
+			font-size: 8rem;
+		}
+		h2{
+			font-size: 2.5rem;
+		}
+		.nav{
+			scale: 0.8;
+		}
+	}
+
+	@media only screen and (max-width: 662px) {
+		section {
+			height: 100vh;
+		}
+		p {
+			font-size: 1.1rem;
+		}
+		h1{
+			font-size: 7rem;
+		}
+		h2{
+			font-size: 2.5rem;
+		}
+		.nav{
+			scale: 0.8;
+		}
+	}
+	@media only screen and (max-width: 596px) {
+		section {
+			height: 100vh;
+		}
+		p {
+			font-size: 1.1rem;
+		}
+		h1{
+			font-size: 5.2rem;
+		}
+		h2{
+			font-size: 2.5rem;
+		}
+		.nav{
+			scale: 0.75;
+		}
+	}
+	@media only screen and (max-width: 400px) {
+		section {
+			height: 100vh;
+		}
+		p {
+			font-size: 1rem;
+		}
+		h1{
+			font-size: 4rem;
+		}
+		h2{
+			font-size: 2.3rem;
+		}
+		.nav{
+			scale: 0.75;
+		}
+	}
+	
+	
 </style>

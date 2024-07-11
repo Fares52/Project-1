@@ -256,4 +256,62 @@
 	.card:has(.discription:not(:empty)) .cardInfo {
 		cursor: pointer;
 	}
+
+	
+	@media only screen and (max-width: 940px) {
+		h1 {
+			/* padding: 40px 0px; */
+		}
+		.card {
+			scale: 0.95;
+		}
+		.cardContainer {
+			padding: 0px 0px;
+			gap: 0px;
+		}
+	}
+
+	@media only screen and (max-width: 740px) {
+		h1 {
+			padding: 20px 0px;
+			font-size: 4.5rem;
+		}
+		.card {
+			scale: 0.95;
+		}
+		.cardContainer {
+			scale: 0.95;
+		}
+	}
+
+	@media only screen and (max-width: 630px) {
+		h1 {
+			padding-top: 15px;
+			padding-bottom: 5px;
+			font-size: 4.2rem;
+		}
+		.card {
+			scale: 0.95;
+		}
+		.cardContainer {
+			scale: 0.9;
+		}
+		section{
+			padding-bottom: 35px;
+		}
+	}
+	@media only screen and (max-width: 530px) {
+		h1 {
+			padding-top: 5px;
+			padding-bottom: 0px;
+			font-size: 3.9rem;
+		}
+		.card {
+			scale: 0.95;
+		}
+		.cardContainer {
+			scale: 0.9;
+			scroll-snap-type:x proximity;
+		}
+	}
 </style>

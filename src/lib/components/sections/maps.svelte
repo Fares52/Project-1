@@ -27,4 +27,12 @@
         scale: 1.2;
     }
 
+    @media only screen and (max-width: 940px) {
+		a{height: 110px;}
+	}
+    @media only screen and (max-width: 530px) {
+		a{height: 90px;}
+	}
+
+
 </style>

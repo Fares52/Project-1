@@ -25,7 +25,7 @@
 					</li>
 				</ul>
 				<ul>
-					<li>
+					<li class="flatText">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="24"
@@ -57,7 +57,7 @@
 				</ul>
 			</div>
 			<div class="card">
-				<h3>Get Social</h3>
+				<h3>Get Socials!</h3>
 				<ul class="socials">
 					<a href="https://www.facebook.com/laparentheze" target="_blank">
 						<svg
@@ -106,10 +106,11 @@
 		justify-content: center;
 	}
 	section {
-		display: flex;
+		display: inline-flex;
 		flex-direction: column;
 		gap: 30px;
-		width: 69%;
+		width: 100%;
+		max-width: 1000px;
 	}
 	.title {
 		display: flex;
@@ -146,6 +147,7 @@
 	.card {
 		border: 1.2px rgba(255, 255, 255, 0.53) solid;
 		width: 30%;
+		min-width: 220px;
 		aspect-ratio: 3 / 2;
 		padding: 15px;
 		color: #f4f1ed;
@@ -153,6 +155,7 @@
 		flex-direction: column;
 		justify-content: space-between;
 		font-family: RobotoCondensed;
+		margin: 0px 5px;
 	}
 	.card h3 {
 		margin-bottom: 10px;
@@ -179,15 +182,79 @@
 		justify-content: center;
 		align-items: center;
 		width: fit-content;
-        opacity: 0.7;
+		opacity: 0.7;
 	}
 
 	a:hover {
 		opacity: 1;
 	}
 
-    .socials{
-        display: flex;
-        gap: 10px;
+	.socials {
+		display: flex;
+		gap: 10px;
+	}
+
+	@media only screen and (max-width: 770px) {
+		section{
+			justify-content: center;
+			align-items: center;
+		}
+		*{
+			text-align: center;
+		}
+		li{
+			display: flex;
+			flex-direction: column;
+		}
+		h3{
+			font-size: 2rem;
+		}
+		footer{
+			padding: 40px 2vw;
+		}
+		.title{
+			width: 100%;
+			text-align: center;
+		}
+		.container {
+			flex-wrap: wrap;
+			height: auto;
+			gap: 10px;
+		}
+		.card {
+			display: flex;
+			flex-direction: row;
+			gap: 10px;
+			width: 100%;
+			height: 100px;
+			justify-content: space-evenly;
+			align-items: center;
+		}
+
+		.flatText{
+			white-space: nowrap;
+		}
+		/* .card:nth-child(3) {
+		display: flex;
+        width: fit-content;
+		height: 150px;
+		align-self: center;
+		margin: 0px auto;
+		margin-top: 12px;
     }
+	.card:nth-child(3)	
+	:where(a,ul,h3,li){
+		text-align: center;
+		align-items: center;
+		align-self: center;
+		width: fit-content;
+	} */
+	}
+
+	@media only screen and (max-width: 666px) {
+		h3{
+			display: none;
+		}
+
+	}
 </style>

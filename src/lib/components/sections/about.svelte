@@ -1,4 +1,6 @@
 <section id="about">
+	<h2 class="mobileH2">About</h2>
+
 	<div class="about-container">
 		<h2>About</h2>
 		<div class="about-section">
@@ -93,6 +95,7 @@
 		max-width: 1000px;
 		margin: 0px auto;
 		z-index: 3;
+		/* box-sizing: border-box; */
 	}
 	.about-section {
 		padding: 20px;
@@ -105,14 +108,14 @@
 		grid-column: 1 / -1;
 		text-align: center;
 		font-size: 2.5em;
-        font-size: 5rem;
+		font-size: 5rem;
 		font-family: catchymager;
 	}
 	h3 {
 		margin-top: 0;
-        margin-bottom: 7px;
+		margin-bottom: 7px;
 		font-size: 1.5em;
-        font-weight: bolder;
+		font-weight: bolder;
 	}
 	ul {
 		list-style: none;
@@ -128,5 +131,43 @@
 	}
 	li.strikethrough::before {
 		content: '✗';
+	}
+
+	.mobileH2 {
+		display: none;
+	}
+	@media only screen and (max-width: 800px) {
+		section {
+			margin-top: -40px;
+			z-index: 1;
+		}
+	}
+	@media only screen and (max-width: 740px) {
+		.about-container {
+			grid-template-columns: repeat(4, 1fr);
+			grid-template-rows: repeat(2, auto);
+			overflow-x: auto;
+			height: auto;
+			white-space: nowrap;
+			padding: 30px;
+			padding-top: 10px;
+		}
+		.about-section {
+			width: 200px;
+			padding: 10px;
+			white-space: normal;
+		}
+		h2 {
+			display: none;
+		}
+		
+		.mobileH2 {
+			padding-top: 40px;
+			font-size: 4rem;
+			display: block;
+			position: relative;
+			z-index: 3;
+			text-align: center;
+		}
 	}
 </style>
