@@ -83,3 +83,11 @@ got it from this site : https://sveltekit.io/blog/sveltekit-images
 	 body{
 		font-size: 1.6rem;
 	 }
+
+<!-- installed vite route plugin to auto complete routs and make sure they exist, basically save a bit time -->
+
+npm i -D vite-plugin-kit-routes
+
+<!-- Intalled JWT for session tokens i believe -->
+
+npm install jsonwebtoken
