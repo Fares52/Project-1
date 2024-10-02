@@ -33,7 +33,7 @@
 	}
 
 	// image uploading code :
-	import ImageUpload from '$lib/components/admin/imageUpload.svelte';
+	// import ImageUpload from '$lib/components/admin/imageUpload.svelte';
 	import { writable } from 'svelte/store';
 
 	// Store to hold the uploaded image URL
@@ -156,7 +156,8 @@
 					placeholder="Ingredients, or any additional notes you want to add, or just leave empty"
 				></textarea>
 			</label>
-			<label for="image"> Image
+			<label for="image">
+				Image
 				<input type="file" />
 			</label>
 			<button type="submit">Finish</button>

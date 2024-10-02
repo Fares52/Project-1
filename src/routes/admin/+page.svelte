@@ -3,60 +3,81 @@
 	import { onMount } from 'svelte';
 	import user from '../../user';
 	import Login from '$lib/Login.svelte';
-	import { fade, fly } from 'svelte/transition';
-	import DataTable from '$lib/components/admin/dataTable.svelte';
+	import { fade } from 'svelte/transition';
 	import DataTable2 from '$lib/components/admin/dataTable2.svelte';
 
 	export let data = []; // This should be populated by the load function
 
-	// Ensure that data are being populated
-	onMount(() => {
-		console.log('data in +page.svelte:', data);
-	});
-	// console.log('data in +page.svFelte:', data);
 	$: isLoggedIn = $user !== null;
 
 	const logout = () => {
 		user.update(() => null);
 	};
-	function updateData(newData) {
-        data = newData; // Update the data with the new dataset
-    }
+
+	// Function to fetch updated data from the API
+	async function fetchData() {
+		console.log('Fetching new data...');
+		try {
+			const response = await fetch('/api/food');
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+			data = result.items;
+			console.log('Updated data:', data);
+		} catch (error) {
+			console.error('Failed to refresh data:', error);
+		}
+	}
+
+	onMount(() => {
+		// Initial data fetch on page load
+		fetchData();
+	});
 </script>
+
+<!--
+  @component
+  ## Some bugs that need fixing:
+  `MAJOR ERROR :` npm Server seemingly just kills itself after some time when the user is logged in. 
+ 
+-->
 
 <section>
 	<!-- <div class="filter"></div> -->
 	{#if isLoggedIn}
-	<div class="container" in:fade={{ duration: 500 }} out:fade={{ duration: 500 }}>
-		<nav>
-			<div class="title">
-				<h1>La Parenthè<span>(</span>ze<span>)</span></h1>
-				<h2><span>ADMIN</span></h2>
-			</div>
-			<button class="logoutButton" type="button" value="Logout!" on:click={logout}>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="32"
-					height="32"
-					fill="#000000"
-					viewBox="0 0 256 256"
-					style="--darkreader-inline-fill: #060606;"
-					data-darkreader-inline-fill=""
-				>
-					<path
-						d="M120,216a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H56V208h56A8,8,0,0,1,120,216Zm109.66-93.66-40-40a8,8,0,0,0-11.32,11.32L204.69,120H112a8,8,0,0,0,0,16h92.69l-26.35,26.34a8,8,0,0,0,11.32,11.32l40-40A8,8,0,0,0,229.66,122.34Z"
+		<div class="container" in:fade={{ duration: 500 }} out:fade={{ duration: 500 }}>
+			<nav>
+				<div class="title">
+					<h1>La Parenthè<span>(</span>ze<span>)</span></h1>
+					<h2><span>ADMIN</span></h2>
+				</div>
+				<button class="logoutButton" type="button" value="Logout!" on:click={logout}>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="32"
+						height="32"
+						fill="#000000"
+						viewBox="0 0 256 256"
+						style="--darkreader-inline-fill: #060606;"
+						data-darkreader-inline-fill=""
 					>
-					</path>
-				</svg>
-				Logout
-			</button>
-		</nav>
+						<path
+							d="M120,216a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H56V208h56A8,8,0,0,1,120,216Zm109.66-93.66-40-40a8,8,0,0,0-11.32,11.32L204.69,120H112a8,8,0,0,0,0,16h92.69l-26.35,26.34a8,8,0,0,0,11.32,11.32l40-40A8,8,0,0,0,229.66,122.34Z"
+						>
+						</path>
+					</svg>
+					Logout
+				</button>
+			</nav>
 
-		<!-- <h1>{$user.username} LOGGED IN POG</h1> -->
-		<!-- <DataTable /> -->
-		 
-		<DataTable2 {data} {updateData} />
-	</div>
+			<!-- <h1>{$user.username} LOGGED IN POG</h1> -->
+			<!-- <DataTable /> -->
+
+			<DataTable2 {data} on:refresh={fetchData} />
+		</div>
 	{:else}
 		<Login />
 	{/if}

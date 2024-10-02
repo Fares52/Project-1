@@ -46,9 +46,14 @@
 	};
 </script>
 
+<!-- @component 
+  # some bugs that need fixing:
+  `1: ` for some reason, the server times out on its own and self destructs after a certain time when the user logs in
+ -->
+
 <!-- Apply transitions to the title and form -->
 <div class="transition">
-	<div class="title" >
+	<div class="title">
 		<h1>La Parenthè<span>(</span>ze<span>)</span></h1>
 		<h2>&gt; <span>ADMIN</span> &lt;</h2>
 	</div>
@@ -72,7 +77,7 @@
 </div>
 
 <style>
-	.transition{
+	.transition {
 		display: flex;
 		flex-direction: column;
 		height: 100vh;

@@ -3,6 +3,7 @@
 
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
+	import { createEventDispatcher } from 'svelte';
 
 	let isDialogOpen = false;
 	let label = '';
@@ -13,38 +14,54 @@
 	let selectedFile = null;
 	let showUploadButton = false;
 	let uploadStatus = '';
+	let imagePreviewUrl = ''; // To hold the image preview URL
+	let isUploading = false; // Loading state for image upload
+	const dispatch = createEventDispatcher(); // To dispatch an event after form submission for data refresh
+
+	// Form validation error messages
+	let errors = {
+		label: '',
+		imageUrl: '',
+		itemName: '',
+		// description: '',
+		categoryType: ''
+	};
 
 	function openDialog() {
-		if (isDialogOpen) return;
 		isDialogOpen = true;
 	}
 
 	function closeDialog() {
-		if (!isDialogOpen) return;
 		isDialogOpen = false;
+		// Do not reset form fields on close, so no call to resetForm() here
+	}
+
+	// Reset form fields and clear validation errors after submission
+	function resetForm() {
+		label = '';
+		imageUrl = '';
+		itemName = '';
+		description = '';
+		categoryType = 1; // Reset to default value
+		selectedFile = null;
+		imagePreviewUrl = ''; // Clear image preview
+		showUploadButton = false;
+		uploadStatus = '';
+		errors = { label: '', imageUrl: '', itemName: '', categoryType: '' };
+		clearRadioSelection(); // Clear radio button selection
 	}
 
 	function handleLabelChange(event) {
-		if (!event || !event.target) return;
-		if (event.target.type === 'radio') {
-			label = event.target.value ?? '';
-		} else if (event.target.type === 'text') {
-			label = event.target.value ?? '';
-		}
+		label = event.target.value ?? '';
 	}
 
 	function handleTypeChange(event) {
-		if (!event || !event.target) return;
-		if (event.target.type === 'radio') {
-			categoryType = parseInt(event.target.value, 10) ?? 1;
-		}
+		categoryType = parseInt(event.target.value, 10) ?? 1;
 	}
 
 	function clearRadioSelection() {
 		const radios = document.querySelectorAll('input[type="radio"][name="predefined-label"]');
-		if (!radios) return;
 		radios.forEach((radio) => {
-			if (!radio) return;
 			radio.checked = false;
 		});
 	}
@@ -52,7 +69,10 @@
 	async function handleFileChange(event) {
 		if (!event || !event.target || !event.target.files) return;
 		selectedFile = event.target.files[0];
+
+		// Create a preview of the selected image
 		if (selectedFile) {
+			imagePreviewUrl = URL.createObjectURL(selectedFile);
 			showUploadButton = true;
 		}
 	}
@@ -63,37 +83,85 @@
 			return;
 		}
 
+		isUploading = true; // Set loading state
+
 		try {
 			const formData = new FormData();
 			formData.append('file', selectedFile);
 
-			const response = await fetch('/upload-image', {
-				// Ensure the correct endpoint
+			const response = await fetch('/api/upload-image', {
 				method: 'POST',
 				body: formData
 			});
 
-			if (!response || !response.ok) {
+			if (!response.ok) {
 				throw new Error('Upload failed.');
 			}
 
 			const data = await response.json();
-			if (!data || !data.uploaded) {
+			if (!data.uploaded) {
 				throw new Error('Invalid response from server.');
 			}
 
 			imageUrl = data.uploaded;
 			uploadStatus = 'Upload successful!';
-			showUploadButton = false; // Hide upload button after successful upload
+			showUploadButton = false;
+			isUploading = false; // Reset loading state
 		} catch (error) {
 			console.error('Error uploading file:', error);
 			uploadStatus = 'Upload failed. Please try again.';
+			isUploading = false; // Reset loading state
 		}
 	}
 
+	// Validate form fields
+	function validateForm() {
+		let isValid = true;
+
+		// Reset errors before validating
+		errors = { label: '', imageUrl: '', itemName: '', categoryType: '' };
+
+		// Validate item name
+		if (!itemName) {
+			errors.itemName = 'Item Name is required';
+			isValid = false;
+		}
+
+		// Validate description
+		// if (!description) {
+		// 	errors.description = 'Description is required';
+		// 	isValid = false;
+		// }
+
+		// Validate image
+		if (!imageUrl) {
+			errors.imageUrl = "Don't forget to upload an image!";
+			isValid = false;
+		}
+
+		// Validate label
+		if (!label) {
+			errors.label = 'Label is required';
+			isValid = false;
+		}
+
+		// Validate category type
+		if (!categoryType) {
+			errors.categoryType = 'Category type is required';
+			isValid = false;
+		}
+
+		return isValid;
+	}
+
 	async function handleSubmit(event) {
-		if (!event) return;
 		event.preventDefault();
+
+		// Perform form validation before submission
+		if (!validateForm()) {
+			console.log('Form is invalid:', errors);
+			return;
+		}
 
 		// Create form data
 		const formData = new FormData();
@@ -105,17 +173,24 @@
 
 		try {
 			const response = await fetch('/admin', {
-				// URL should match your SvelteKit route
 				method: 'POST',
 				body: formData
 			});
 
-			if (!response || !response.ok) {
+			if (!response.ok) {
 				throw new Error('Form submission failed.');
 			}
 
 			console.log('Form submitted successfully.');
+
+			// Reset form fields only after successful submission
+			resetForm();
+
+			// Close the dialog after form submission
 			closeDialog();
+
+			// Dispatch a custom event to notify parent to refresh the data
+			dispatch('refresh');
 		} catch (error) {
 			console.error('Error submitting form:', error);
 		}
@@ -149,6 +224,11 @@
 					></path>
 				</svg>
 			</button>
+
+			<!-- Validation Errors -->
+
+			<!-- {#if errors.description}<p class="error">{errors.description}</p>{/if} -->
+
 			<fieldset class="typeFieldset">
 				<legend>Type</legend>
 				<input
@@ -179,9 +259,11 @@
 				/>
 				<label for="Desserts">Desserts</label>
 			</fieldset>
-			<fieldset class="labelsFieldset">
-				<legend>Label</legend>
 
+			<fieldset class="labelsFieldset">
+				<legend style="text-align: left">Label
+					{#if errors.label}<p class="error">{errors.label}</p>{/if}
+				</legend>
 				<!-- Radio buttons for predefined labels -->
 				<div>
 					<input
@@ -214,7 +296,7 @@
 					<label for="SignatureDishLabel">Signature Dish</label>
 				</div>
 
-				<!-- Text input for custom label, acts as its own label and radio button -->
+				<!-- Text input for custom label -->
 				<div>
 					<input
 						type="text"
@@ -228,23 +310,54 @@
 			</fieldset>
 			<label class="defaultLabel" for="itemName">
 				Name
+				{#if errors.itemName}<span class="error">{errors.itemName}</span>{/if}
 				<input type="text" bind:value={itemName} />
 			</label>
+
 			<label class="defaultLabel bigText" for="description">
 				Description
 				<textarea id="description" rows="3" bind:value={description}></textarea>
 			</label>
-			<label for="image_url">
-				Upload Image
-				<input type="file" id="image_url" on:change={handleFileChange} />
+
+			<!-- Image Upload Field -->
+			{#if errors.imageUrl}<p class="error">{errors.imageUrl}</p>{/if}
+			<label for="image_url" class="imgLabel">
+				<!-- Preview the image if selected -->
+				<p class="imgPreviewBox">
+					{#if imagePreviewUrl}
+						<img src={imagePreviewUrl} alt="Preview" class="imgPreview" />
+					{:else}
+						Image
+					{/if}
+				</p>
+				<input type="file" id="image_url" on:change={handleFileChange} style="display: none;" />
 			</label>
-			{#if showUploadButton}
-				<button type="button" on:click={handleUpload}>Upload Image</button>
+
+			{#if !showUploadButton}
+				<button class="uploadImageButton" type="button" disabled style="cursor: default;">
+					{#if uploadStatus}
+						{uploadStatus}
+					{:else}
+						Upload Image
+					{/if}
+				</button>
+			{:else}
+				<button
+					class="uploadImageButton"
+					style="opacity: 1;"
+					type="button"
+					on:click={handleUpload}
+					disabled={isUploading}
+				>
+					{#if isUploading}
+						Uploading...
+					{:else}
+						Upload Image
+					{/if}
+				</button>
 			{/if}
+
 			<button type="submit">Finish</button>
-			{#if uploadStatus}
-				<p>{uploadStatus}</p>
-			{/if}
 		</form>
 	</div>
 {/if}
@@ -323,6 +436,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		z-index: 2;
 	}
 
 	.dialog {
@@ -338,11 +452,12 @@
 		font-family: coco-gothic;
 		font-weight: lighter;
 		box-shadow: inset #d5b50295 0px 0px 7px;
-		max-width: 700px;
+		max-width: 380px;
 		max-height: 80%;
-		overflow-y: scroll;
+		overflow-y: auto;
 		scrollbar-width: thin;
 		scrollbar-color: #ffffff66 rgba(232, 232, 232, 0.342) !important;
+		z-index: 3;
 	}
 
 	.dialog h1 {
@@ -475,6 +590,7 @@
 		min-height: 80px; /* Minimum height */
 		max-width: 100%; /* Ensures the textarea doesn't exceed the form width */
 		min-width: 100%;
+		margin-bottom: 5px;
 		overflow: hidden; /* Prevents scrollbars unless necessary */
 		text-align: left;
 		resize: both; /* Allows the textarea to be resizable both horizontally and vertically */
@@ -492,6 +608,62 @@
 	.bigText textarea:focus {
 		color: #623e2a; /* Matches the input's focus color */
 		background-color: #f3eee5; /* Matches the input's background color */
+	}
+
+	.imgLabel {
+		display: flex;
+		width: 100%;
+		justify-content: center;
+		align-items: center;
+		height: auto;
+	}
+
+	.imgPreview {
+		width: 100%;
+		height: auto;
+		aspect-ratio: 4/3;
+		object-fit: cover;
+		object-position: center;
+		/* margin: 10px 0px; */
+		border-radius: 5px;
+	}
+
+	.imgPreviewBox {
+		height: auto;
+		background-color: #d6b785;
+		aspect-ratio: 4/3;
+		display: flex;
+		border-radius: 5px;
+		margin: 5px auto;
+		justify-content: center;
+		align-items: center;
+		position: relative;
+		width: 70%;
+		margin: 5px 0px;
+		box-sizing: content-box;
+		cursor: pointer;
+	}
+
+	.uploadImageButton {
+		cursor: pointer;
+		width: 70%;
+		margin: 3px auto;
+		text-align: center;
+		padding: 3px 0px;
+		border: 1px #71a87166 solid;
+		border-radius: 5px;
+		background: #9ad69a;
+		color: #008000;
+		box-shadow: #00800094 0px 0px 2px inset;
+		opacity: 0.5;
+		display: flex;
+		justify-content: center;
+	}
+
+	.error{
+		color: red;
+		font-size: 1.2rem;
+		margin-top: -5px;
 	}
 
 	button[type='submit'] {

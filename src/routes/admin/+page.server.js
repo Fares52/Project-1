@@ -4,6 +4,8 @@ import { createPool } from '@vercel/postgres';
 import { put } from "@vercel/blob"; // Import put for Blob storage
 import { POSTGRES_URL } from '$env/static/private';
 
+
+
 // Create a connection pool
 const pool = createPool({
   connectionString: POSTGRES_URL
@@ -50,41 +52,47 @@ export const actions = {
 
 
 
-export const load = async () => {
-  try {
-    const client = await pool.connect();
-    try {
-      const { rows } = await client.query(`
-        SELECT 
-          food.id, 
-          food.name,
-          food.label,
-          food.description, 
-          food.image_url, 
-          food.date_added AT TIME ZONE 'Europe/Paris' AS date_added, 
-          category.category_name 
-        FROM food 
-        JOIN category 
-        ON food.category_id = category.id
-        ORDER BY food.date_added DESC
-      `);
+// the bellow was being used before addapting the food api under api/food/+server.js + the modification the to /lib/db.js file 
 
-      return {
-        items: rows.map(row => ({
-          id: row.id,
-          name: row.name,
-          label: row.label,
-          description: row.description,
-          image_url: row.image_url,
-          date_added: row.date_added.toISOString(),
-          category_name: row.category_name
-        }))
-      };
-    } finally {
-      client.release();
-    }
-  } catch (error) {
-    console.error('Error fetching food items:', error);
-    throw new Error('Failed to load food items.');
-  }
-};
+// export const load = async () => {
+//   try {
+//     const client = await pool.connect();
+//     try {
+//       const { rows } = await client.query(`
+//         SELECT 
+//           food.id, 
+//           food.name,
+//           food.label,
+//           food.description, 
+//           food.image_url, 
+//           food.date_added AT TIME ZONE 'Europe/Paris' AS date_added, 
+//           category.category_name 
+//         FROM food 
+//         JOIN category 
+//         ON food.category_id = category.id
+//         ORDER BY food.date_added DESC
+//       `);
+
+//       // console.log('Data fetched from database:', rows);  // Add this line to log data from the DB
+
+//       // Return data as a plain object
+//       return {
+//         items: rows.map(row => ({
+//           id: row.id,
+//           name: row.name,
+//           label: row.label,
+//           description: row.description,
+//           image_url: row.image_url,
+//           date_added: row.date_added.toISOString(),
+//           category_name: row.category_name
+//         }))
+//       };
+//     } finally {
+//       client.release();
+//     }
+//   } catch (error) {
+//     console.error('Error fetching food items:', error);  // More verbose logging
+//     throw new Error('Failed to load food items.');
+//   }
+// };
+
