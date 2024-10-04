@@ -32,7 +32,8 @@ export async function getFoodItems() {
               food.description, 
               food.image_url, 
               food.date_added AT TIME ZONE 'Europe/Paris' AS date_added, 
-              category.category_name 
+              category.category_name,
+              food.visible  -- Include the visible column
             FROM food 
             JOIN category 
             ON food.category_id = category.id
@@ -46,13 +47,13 @@ export async function getFoodItems() {
             description: row.description,
             image_url: row.image_url,
             date_added: row.date_added.toISOString(),
-            category_name: row.category_name
+            category_name: row.category_name,
+            visible: row.visible // Add the visible property
         }));
     } finally {
         client.release();  // Properly release the client back to the pool
     }
 }
-
 // Function to delete a food item by its ID
 export async function deleteFoodItemById(id) {
     const client = await pool.connect();  // Use pool connection
@@ -101,7 +102,13 @@ export async function getOldImageUrl(id) {
 
     try {
         const { rows } = await client.query(`SELECT image_url FROM food WHERE id = $1`, [id]);
-        return rows[0]?.image_url || null; // Return the old image URL or null if not found
+        const oldImageUrl = rows[0]?.image_url || null;
+        if (oldImageUrl) {
+            console.log('Old image URL:', oldImageUrl);
+        } else {
+            console.log('Old image URL not found or bugged out');
+        }
+        return oldImageUrl;
     } catch (error) {
         console.error('Failed to fetch old image URL:', error);
         throw error;
@@ -109,6 +116,7 @@ export async function getOldImageUrl(id) {
         client.release();
     }
 }
+
 
 // Function to update food item data, including replacing the image URL
 export async function patchFoodItem(id, updateData) {
@@ -129,9 +137,10 @@ export async function patchFoodItem(id, updateData) {
         updateValues.push(label);
     }
 
-    if (description) {
+    // Handle empty descriptions (set to NULL or empty string)
+    if (description !== undefined) {
         updateFields.push(`description = $${queryIndex++}`);
-        updateValues.push(description);
+        updateValues.push(description === '' ? '' : description);  // Convert empty string to empty string
     }
 
     if (categoryType) {
@@ -155,3 +164,27 @@ export async function patchFoodItem(id, updateData) {
 
     return { success: true };
 }
+
+
+// Function to update the visibility of a food item
+export async function updateVisibility(id, visible) {
+    const client = await pool.connect();
+    
+    try {
+        // Update the visibility column in the database
+        await client.query(`
+            UPDATE food
+            SET visible = $1
+            WHERE id = $2
+        `, [visible, id]);
+
+        return { success: true };
+    } catch (error) {
+        console.error('Failed to update visibility:', error);
+        throw error;
+    } finally {
+        client.release();
+    }
+}
+
+

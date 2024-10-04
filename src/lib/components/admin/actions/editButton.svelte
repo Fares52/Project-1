@@ -22,13 +22,21 @@
 	let formData = {
 		name: itemName,
 		label: itemLabel,
-		description: itemDescription,
+		description: itemDescription, // Allow for the description to be empty
 		categoryType: categoryType
 	};
 
 	// Open the edit dialog
+	// Ensure formData is correctly populated when the dialog is opened
 	function openDialog() {
-		isDialogOpen = true;
+		formData = {
+			name: itemName,
+			label: itemLabel,
+			description: itemDescription,
+			categoryType: categoryType // Ensure it starts with the correct string category
+		};
+		console.log('Form Data on Open:', formData);
+		isDialogOpen = true; // Open the dialog
 	}
 
 	// Close the edit dialog
@@ -50,48 +58,56 @@
 
 	// Handle form submission
 	async function handleSubmit(event) {
-	event.preventDefault();
-	loading = true;
+		event.preventDefault();
+		loading = true;
 
-	const updateData = {};
+		// Create a copy of formData to modify
+		const updateData = { ...formData };
 
-	// Compare formData with the original props and only add modified fields to updateData
-	if (formData.name !== itemName) updateData.name = formData.name;
-	if (formData.label !== itemLabel) updateData.label = formData.label;
-	if (formData.description !== itemDescription) updateData.description = formData.description;
-	if (formData.categoryType !== categoryType) updateData.categoryType = formData.categoryType;
+		// Map categoryType back to integers for database
+		const categoryMap = {
+			"Entrees": 1,
+			"Plats": 2,
+			"Desserts": 3
+		};
 
-	// If the image has changed, upload it first
-	if (isImageChanged) {
-		const uploadResponse = await handleUpload(); // Upload the new image
-		if (uploadResponse) {
-			updateData.imageUrl = uploadResponse; // Set new image URL in updateData
-		} else {
-			console.error('Image upload failed');
+		// Convert categoryType to its corresponding integer before submitting
+		if (updateData.categoryType in categoryMap) {
+			updateData.categoryType = categoryMap[updateData.categoryType];
+		}
+
+		// If the image has changed, upload it first
+		if (isImageChanged) {
+			const uploadResponse = await handleUpload(); // Upload the new image
+			if (uploadResponse) {
+				updateData.imageUrl = uploadResponse; // Set new image URL in updateData
+			} else {
+				console.error('Image upload failed');
+				loading = false;
+				return;
+			}
+		}
+
+		try {
+			// Send the updated data to the server
+			const response = await fetch(`/api/food/${itemId}`, {
+				method: 'PATCH',
+				body: JSON.stringify(updateData),
+				headers: { 'Content-Type': 'application/json' }
+			});
+
+			if (!response.ok) throw new Error('Error updating item');
+
+			const result = await response.json();
+			console.log('Update result:', result);
+
+			closeDialog();
+		} catch (error) {
+			console.error('Error:', error);
+		} finally {
 			loading = false;
-			return;
 		}
 	}
-
-	try {
-		const response = await fetch(`/api/food/${itemId}`, {
-			method: 'PATCH',
-			body: JSON.stringify(updateData),
-			headers: { 'Content-Type': 'application/json' }
-		});
-
-		if (!response.ok) throw new Error('Error updating item');
-
-		const result = await response.json();
-		console.log('Update result:', result);
-
-		closeDialog();
-	} catch (error) {
-		console.error('Error:', error);
-	} finally {
-		loading = false;
-	}
-}
 
 	// Handle the image upload to the server
 	async function handleUpload() {
@@ -140,10 +156,25 @@
 	}
 </script>
 
+<!-- @component
+## Edit button 
+
+
+
+-->
+
 <!-- Edit button -->
 <button class="editButton" on:click={openDialog}>
-	<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256">
-		<path d="M229.66,58.34l-32-32a8,8,0,0,0-11.32,0l-96,96A8,8,0,0,0,88,128v32a8,8,0,0,0,8,8h32a8,8,0,0,0,5.66-2.34l96-96A8,8,0,0,0,229.66,58.34ZM124.69,152H104V131.31l64-64L188.69,88ZM200,76.69,179.31,56,192,43.31,212.69,64ZM224,128v80a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32h80a8,8,0,0,1,0,16H48V208H208V128a8,8,0,0,1,16,0Z"></path>
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width="32"
+		height="32"
+		fill="#000000"
+		viewBox="0 0 256 256"
+	>
+		<path
+			d="M229.66,58.34l-32-32a8,8,0,0,0-11.32,0l-96,96A8,8,0,0,0,88,128v32a8,8,0,0,0,8,8h32a8,8,0,0,0,5.66-2.34l96-96A8,8,0,0,0,229.66,58.34ZM124.69,152H104V131.31l64-64L188.69,88ZM200,76.69,179.31,56,192,43.31,212.69,64ZM224,128v80a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32h80a8,8,0,0,1,0,16H48V208H208V128a8,8,0,0,1,16,0Z"
+		></path>
 	</svg>
 </button>
 
@@ -154,7 +185,9 @@
 			<h1>Edit <br /> "{itemName}"</h1>
 			<button class="closeDialogButton" on:click={closeDialog} type="button">
 				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">
-					<path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path>
+					<path
+						d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"
+					></path>
 				</svg>
 			</button>
 
@@ -163,14 +196,13 @@
 			<!-- Category type -->
 			<fieldset class="typeFieldset">
 				<legend>Type</legend>
-				<input type="radio" id="Entrees" name="type" value="1" bind:group={formData.categoryType} />
+				<input type="radio" id="Entrees" name="type" value="Entrees" bind:group={formData.categoryType} />
 				<label for="Entrees">Entrees</label>
-				<input type="radio" id="Plats" name="type" value="2" bind:group={formData.categoryType} />
+				<input type="radio" id="Plats" name="type" value="Plats" bind:group={formData.categoryType} />
 				<label for="Plats">Plats</label>
-				<input type="radio" id="Desserts" name="type" value="3" bind:group={formData.categoryType} />
+				<input type="radio" id="Desserts" name="type" value="Desserts" bind:group={formData.categoryType}/>
 				<label for="Desserts">Desserts</label>
 			</fieldset>
-
 			<!-- Label -->
 			<label class="defaultLabel" for="customLabel">
 				Label
@@ -186,13 +218,18 @@
 			<!-- Description -->
 			<label class="defaultLabel bigText" for="description">
 				Description
-				<textarea id="description" rows="3" placeholder={itemDescription} bind:value={formData.description}></textarea>
+				<textarea
+					id="description"
+					rows="3"
+					placeholder={itemDescription}
+					bind:value={formData.description}
+				></textarea>
 			</label>
 
 			<!-- Image upload -->
 			<label for="image_url" class="imgLabel">
 				<div class="imgPreviewBox">
-					 <img src={imagePreviewUrl} alt="Preview" class="imgPreview" />
+					<img src={imagePreviewUrl} alt="Preview" class="imgPreview" />
 					{#if !isImageChanged}
 						<p class="onImageText">Click to change image</p>
 					{/if}
@@ -202,7 +239,12 @@
 
 			<!-- Upload image button -->
 			{#if showUploadButton}
-				<button class="uploadImageButton" type="button" on:click={handleUpload} disabled={isUploading}>
+				<button
+					class="uploadImageButton"
+					type="button"
+					on:click={handleUpload}
+					disabled={isUploading}
+				>
 					{#if isUploading}
 						Uploading...
 					{:else}
@@ -219,7 +261,6 @@
 		</form>
 	</div>
 {/if}
-
 
 <style>
 	.editButton {
@@ -332,9 +373,6 @@
 	}
 
 	.typeFieldset input[type='radio']:checked + label {
-		/* border: #623e2a solid 2px; */
-		/* box-shadow: inset #623e2a6a 0px 0px 7px;
-		background-color: #623e2a17; */
 		color: #e4f1ff;
 		background-color: #5271ff;
 	}

@@ -16,6 +16,7 @@
 	
 		// Dispatch the refresh event
 		dispatch('refresh');
+        
     }
 </script>
 

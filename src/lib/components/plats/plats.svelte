@@ -1,139 +1,62 @@
+<script>
+	// @ts-nocheck
+	import { onMount } from 'svelte';
+
+	let plats = [];
+
+	// Fetch all food items from the API and filter out the visible plats
+	async function fetchPlats() {
+		try {
+			const response = await fetch('/api/food');
+			const data = await response.json();
+
+			if (response.ok) {
+				// Filter for visible plats
+				plats = data.items.filter((item) => item.category_name === 'Plats' && item.visible);
+			} else {
+				console.error(data.error);
+			}
+		} catch (error) {
+			console.error('Error fetching plats:', error);
+		}
+	}
+
+	onMount(() => {
+		fetchPlats();
+	});
+</script>
+
 <section>
 	<h1>Plats | 11€</h1>
 	<div class="cardContainer">
-		<div class="card">
-			<enhanced:img
-				class="foodPic"
-				src="$lib/images/menu/food/tartare.jpg"
-				alt="FoodPhotoGoesHere"
-			/>
-			<div class="cardInfo" role="button" tabindex="0">
-				<p>Classic</p>
-				<h2>Tartare de saumon et pomme de terre roses</h2>
-				<p>11 Euro</p>
-				<svg
-					class="arrowSVG"
-					xmlns="http://www.w3.org/2000/svg"
-					width="18"
-					height="18"
-					fill="#623e2a"
-					viewBox="0 0 256 256"
-					style="--darkreader-inline-fill: #060606;"
-					data-darkreader-inline-fill=""
-					><path
-						d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-					></path></svg
-				>
-				<p class="discription">
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. At, autem quasi itaque, facilis
-					modi sapiente minus natus inventore, possimus illum ullam. Repellat amet, at nihil
-					deserunt animi sint eaque obcaecati.
-				</p>
-			</div>
-		</div>
-		<div class="card">
-			<enhanced:img
-				class="foodPic"
-				src="$lib/images/menu/food/borger.jpg"
-				alt="FoodPhotoGoesHere"
-			/>
-			<div class="cardInfo" role="button" tabindex="0">
-				<p>Availble all week!</p>
-				<h2>Parenthe(ze) Burger & fries</h2>
-				<p>11 Euro</p>
-				<svg
-					class="arrowSVG"
-					xmlns="http://www.w3.org/2000/svg"
-					width="18"
-					height="18"
-					fill="#623e2a"
-					viewBox="0 0 256 256"
-					style="--darkreader-inline-fill: #060606;"
-					data-darkreader-inline-fill=""
-					><path
-						d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-					></path></svg
-				>
-				<p class="discription">
-								
-				</p>
-			</div>
-		</div>
-		<div class="card">
-			<enhanced:img
-				class="foodPic"
-				src="$lib/images/menu/food/seiche.jpg"
-				alt="FoodPhotoGoesHere"
-			/>
-			<div class="cardInfo" role="button" tabindex="0">
-				<p>Popular!</p>
-				<h2>Seiche en persillade et poêlée de légumes</h2>
-				<p>11 Euro</p>
-				<svg
-					class="arrowSVG"
-					xmlns="http://www.w3.org/2000/svg"
-					width="18"
-					height="18"
-					fill="#623e2a"
-					viewBox="0 0 256 256"
-					style="--darkreader-inline-fill: #060606;"
-					data-darkreader-inline-fill=""
-					><path
-						d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-					></path></svg
-				>
-				<p class="discription">
-					:D 
-				</p>
-			</div>
-			
-		</div>
-		<div class="card">
-			<enhanced:img
-				class="foodPic"
-				src="$lib/images/menu/food/saumon.jpg"
-				alt="FoodPhotoGoesHere"
-			/>
-			<div class="cardInfo" role="button" tabindex="0">
-				<p>From the shore</p>
-				<h2>Saumon fumé maison</h2>
-				<p>11 Euro</p>
-				<svg
-					class="arrowSVG"
-					xmlns="http://www.w3.org/2000/svg"
-					width="18"
-					height="18"
-					fill="#623e2a"
-					viewBox="0 0 256 256"
-					style="--darkreader-inline-fill: #060606;"
-					data-darkreader-inline-fill=""
-					><path
-						d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-					></path></svg
-				>
-				<p class="discription">
-					
-				</p>
-			</div>
-			
-		</div>
-		<!--         
-        <div class="card">
-            <enhanced:img class="foodPic" src="$lib/images/menu/food/foie.jpg" alt="FoodPhotoGoesHere" />
-            <div class="cardInfo">
-                <p>New</p>
-                <h2>Nos dégustations de foie gras maison</h2>
-                <p>5 Euro</p>
-            </div>
-        </div>
-        <div class="card">
-            <enhanced:img class="foodPic" src="$lib/images/menu/food/foie.jpg" alt="FoodPhotoGoesHere" />
-            <div class="cardInfo">
-                <p>New</p>
-                <h2>Nos dégustations de foie gras maison</h2>
-                <p>5 Euro</p>
-            </div>
-        </div> -->
+		{#if plats.length > 0}
+			{#each plats as plat}
+				<div class="card">
+					<img class="foodPic" src={plat.image_url} alt={plat.name} />
+					<div class="cardInfo" role="button" tabindex="0">
+						<p>{plat.label}</p>
+						<h2>{plat.name}</h2>
+						<p>11 Euro</p>
+						<svg
+							class="arrowSVG"
+							xmlns="http://www.w3.org/2000/svg"
+							width="18"
+							height="18"
+							fill="#623e2a"
+							viewBox="0 0 256 256"
+							style="--darkreader-inline-fill: #060606;"
+							data-darkreader-inline-fill=""
+							><path
+								d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+							></path></svg
+						>
+						<p class="discription">{plat.description}</p>
+					</div>
+				</div>
+			{/each}
+		{:else}
+			<p>No plats available</p>
+		{/if}
 	</div>
 </section>
 

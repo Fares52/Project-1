@@ -4,7 +4,7 @@ import { deleteFoodItemById } from '$lib/db'; // Correct import for your delete 
 import { json } from '@sveltejs/kit';
 import { del } from '@vercel/blob';
 import { pool } from '$lib/db'; // Correct path to your database pool
-import { patchFoodItem, getOldImageUrl } from '$lib/db';
+import { patchFoodItem, getOldImageUrl, updateVisibility } from '$lib/db'; // Add updateVisibility from db.js
 
 // DELETE endpoint for deleting a food item and its image
 export async function DELETE({ params }) {
@@ -38,32 +38,31 @@ async function uploadImageToBlob(imageFile) {
 }
 
 export async function PATCH({ params, request }) {
-    const { id } = params; // Get the food item ID from the request
+    const { id } = params;  // Get the food item ID from the request
     const data = await request.json(); // Parse the incoming update data
 
     try {
-        // Step 1: Retrieve the old image URL before updating
-        const oldImageUrl = await getOldImageUrl(id);
+        // Check if visibility update is requested
+        if (data.hasOwnProperty('visible')) {
+            // Handle visibility update
+            await updateVisibility(id, data.visible);
+            return json({ message: 'Visibility updated successfully' }, { status: 200 });
+        }
 
-        // Step 2: Update the food item in the database
-        const updatedItem = await patchFoodItem(id, data);
+        // For other regular updates (e.g., name, description, image)
+        const oldImageUrl = await getOldImageUrl(id);  // Get old image URL
 
-        // Step 3: If a new image is uploaded, delete the old image from the blob store
+        const updatedItem = await patchFoodItem(id, data);  // Update the item
+
+        // If new image uploaded, delete old image
         if (data.imageUrl && oldImageUrl) {
-            // Validate old image URL before processing
             try {
-                const oldImageKey = new URL(oldImageUrl).pathname.substring(1); // Get the blob key (strip leading "/")
-                
-                if (oldImageKey) {
-                    await del(oldImageKey, {
-                        token: process.env.BLOB_READ_WRITE_TOKEN // Ensure you use the correct token
-                    });
-                    console.log(`Deleted old image: ${oldImageUrl}`);
-                } else {
-                    console.error('Old image key is invalid.');
-                }
+                await del(oldImageUrl, {
+                    token: process.env.BLOB_READ_WRITE_TOKEN
+                });
+                console.log(`Deleted old image: ${oldImageUrl}`);
             } catch (urlError) {
-                console.error('Failed to parse old image URL:', urlError);
+                console.error('Failed to delete old image from blob:', urlError);
             }
         }
 
@@ -73,3 +72,4 @@ export async function PATCH({ params, request }) {
         return json({ error: 'Failed to update food item' }, { status: 500 });
     }
 }
+

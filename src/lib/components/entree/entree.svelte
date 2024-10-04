@@ -1,101 +1,62 @@
+<script>
+	// @ts-nocheck
+	import { onMount } from 'svelte';
+
+	let entrees = [];
+
+	// Fetch all food items from the API and filter out the visible entrees
+	async function fetchEntrees() {
+		try {
+			const response = await fetch('/api/food');
+			const data = await response.json();
+
+			if (response.ok) {
+				// Filter for visible entrees
+				entrees = data.items.filter((item) => item.category_name === 'Entrees' && item.visible);
+			} else {
+				console.error(data.error);
+			}
+		} catch (error) {
+			console.error('Error fetching entrees:', error);
+		}
+	}
+
+	onMount(() => {
+		fetchEntrees();
+	});
+</script>
+
 <section>
-	<h1>Entrées | 5€</h1>
+	<h1>Entrées | 5,5€</h1>
 	<div class="cardContainer">
-		<div class="card">
-			<enhanced:img class="foodPic" src="$lib/images/menu/food/soup.jpg" alt="FoodPhotoGoesHere" />
-			<div class="cardInfo" role="button" tabindex="0">
-				<p>New</p>
-				<h2>Velouté de courge/sucrine au lait de coco</h2>
-				<p>5 Euro</p>
-				<svg
-					class="arrowSVG"
-					xmlns="http://www.w3.org/2000/svg"
-					width="18"
-					height="18"
-					fill="#623e2a"
-					viewBox="0 0 256 256"
-					style="--darkreader-inline-fill: #060606;"
-					data-darkreader-inline-fill=""
-					><path
-						d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-					></path></svg
-				>
-				<p class="discription">
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. At, autem quasi itaque, facilis
-					modi sapiente minus natus inventore, possimus illum ullam. Repellat amet, at nihil
-					deserunt animi sint eaque obcaecati.
-				</p>
-			</div>
-		</div>
-		<div class="card">
-			<enhanced:img
-				class="foodPic"
-				src="$lib/images/menu/food/Maquereau.jpg"
-				alt="FoodPhotoGoesHere"
-			/>
-			<div class="cardInfo" role="button" tabindex="0">
-				<p>Signature Dish</p>
-				<h2>Maquereau Gravlax à l'aneth</h2>
-				<p>5 Euro</p>
-				<svg
-					class="arrowSVG"
-					xmlns="http://www.w3.org/2000/svg"
-					width="18"
-					height="18"
-					fill="#623e2a"
-					viewBox="0 0 256 256"
-					style="--darkreader-inline-fill: #060606;"
-					data-darkreader-inline-fill=""
-					><path
-						d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-					></path></svg
-				>
-				<p class="discription">
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum expedita perferendis
-					minima, ducimus sapiente dolore eaque necessitatibus. Nemo voluptatibus mollitia
-					perspiciatis obcaecati consequuntur, labore fuga odit, veritatis, consectetur eius et!
-				</p>
-			</div>
-		</div>
-		<div class="card">
-			<enhanced:img class="foodPic" src="$lib/images/menu/food/foie.jpg" alt="FoodPhotoGoesHere" />
-			<div class="cardInfo" role="button" tabindex="0">
-				<p>Best seller</p>
-				<h2>Nos dégustations de foie gras maison</h2>
-				<p>5 Euro</p>
-				<svg
-					class="arrowSVG"
-					xmlns="http://www.w3.org/2000/svg"
-					width="18"
-					height="18"
-					fill="#623e2a"
-					viewBox="0 0 256 256"
-					style="--darkreader-inline-fill: #060606;"
-					data-darkreader-inline-fill=""
-					><path
-						d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
-					></path></svg
-				>
-				<p class="discription"></p>
-			</div>
-		</div>
-		<!--         
-        <div class="card">
-            <enhanced:img class="foodPic" src="$lib/images/menu/food/foie.jpg" alt="FoodPhotoGoesHere" />
-            <div class="cardInfo">
-                <p>New</p>
-                <h2>Nos dégustations de foie gras maison</h2>
-                <p>5 Euro</p>
-            </div>
-        </div>
-        <div class="card">
-            <enhanced:img class="foodPic" src="$lib/images/menu/food/foie.jpg" alt="FoodPhotoGoesHere" />
-            <div class="cardInfo">
-                <p>New</p>
-                <h2>Nos dégustations de foie gras maison</h2>
-                <p>5 Euro</p>
-            </div>
-        </div> -->
+		{#if entrees.length > 0}
+			{#each entrees as entree}
+				<div class="card">
+					<img class="foodPic" src={entree.image_url} alt={entree.name} />
+					<div class="cardInfo" role="button" tabindex="0">
+						<p>{entree.label}</p>
+						<h2>{entree.name}</h2>
+						<p>5,5 Euro</p> 
+						<svg
+							class="arrowSVG"
+							xmlns="http://www.w3.org/2000/svg"
+							width="18"
+							height="18"
+							fill="#623e2a"
+							viewBox="0 0 256 256"
+							style="--darkreader-inline-fill: #060606;"
+							data-darkreader-inline-fill=""
+							><path
+								d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+							></path></svg
+						>
+						<p class="discription">{entree.description}</p>
+					</div>
+				</div>
+			{/each}
+		{:else}
+			<p>No entrees available</p>
+		{/if}
 	</div>
 </section>
 
@@ -258,7 +219,7 @@
 		.cardContainer {
 			scale: 0.9;
 		}
-		section{
+		section {
 			padding-bottom: 35px;
 		}
 	}
@@ -273,7 +234,7 @@
 		}
 		.cardContainer {
 			scale: 0.9;
-			scroll-snap-type:x proximity;
+			scroll-snap-type: x proximity;
 		}
 	}
 </style>

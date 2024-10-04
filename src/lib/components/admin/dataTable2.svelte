@@ -18,7 +18,9 @@
 
 	function selectCategory(category) {
 		selectedCategory = category;
+
 		console.log('Selected category:', category);
+		handleRefresh();
 	}
 
 	// Filter items based on the selected category
@@ -50,10 +52,6 @@
 
 <!--
   @component
-  ## Some bugs that need fixing:
-  `refresh button needs to be clicked twice to display new data`
-  `when swapping from a category to the next, then clicking on one of the actions, sometimes you get the data of the previous category `
-  `item even tho what you see is data of the proper category, it's a weird bug that im not sure if its only visual`
   ## Next up!!!!!!!!!!!!!!!!: 	
   - Add visibility button
   - finish the user page 
@@ -116,7 +114,7 @@
 								<div class="actionButtonsDiv">
 									<EditButton itemId={item.id} categoryType={item.category_name} itemName={item.name} itemLabel={item.label} itemDescription={item.description} itemImage={item.image_url} />
 									<DeleteButton itemId={item.id} itemName={item.name} />
-									<!-- <VisibilityButton /> -->
+									<VisibilityButton itemId={item.id} visible={item.visible} />
 								</div>
 							</td>
 						</tr>
