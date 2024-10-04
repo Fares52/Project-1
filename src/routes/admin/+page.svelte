@@ -72,10 +72,6 @@
 					Logout
 				</button>
 			</nav>
-
-			<!-- <h1>{$user.username} LOGGED IN POG</h1> -->
-			<!-- <DataTable /> -->
-
 			<DataTable2 {data} on:refresh={fetchData} />
 		</div>
 	{:else}

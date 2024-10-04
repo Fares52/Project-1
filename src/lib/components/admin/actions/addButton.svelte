@@ -10,7 +10,7 @@
 	let imageUrl = '';
 	let itemName = '';
 	let description = '';
-	let categoryType = 1; // Default value for category type
+	let categoryType = 0; // Default value for category type
 	let selectedFile = null;
 	let showUploadButton = false;
 	let uploadStatus = '';
@@ -230,38 +230,45 @@
 			<!-- {#if errors.description}<p class="error">{errors.description}</p>{/if} -->
 
 			<fieldset class="typeFieldset">
-				<legend>Type</legend>
-				<input
-					type="radio"
-					id="Entrees"
-					name="type"
-					value="1"
-					checked={categoryType === 1}
-					on:change={handleTypeChange}
-				/>
-				<label for="Entrees">Entrees</label>
-				<input
-					type="radio"
-					id="Plats"
-					name="type"
-					value="2"
-					checked={categoryType === 2}
-					on:change={handleTypeChange}
-				/>
-				<label for="Plats">Plats</label>
-				<input
-					type="radio"
-					id="Desserts"
-					name="type"
-					value="3"
-					checked={categoryType === 3}
-					on:change={handleTypeChange}
-				/>
-				<label for="Desserts">Desserts</label>
+				<legend style="text-align: start;">Type
+				{#if errors.categoryType}
+					<p class="error">{errors.categoryType}</p>
+				{/if}
+			</legend>
+				
+					<input
+						type="radio"
+						id="Entrees"
+						name="type"
+						value="1"
+						checked={categoryType === 1}
+						on:change={handleTypeChange}
+					/>
+					<label for="Entrees">Entrees</label>
+					<input
+						type="radio"
+						id="Plats"
+						name="type"
+						value="2"
+						checked={categoryType === 2}
+						on:change={handleTypeChange}
+					/>
+					<label for="Plats">Plats</label>
+					<input
+						type="radio"
+						id="Desserts"
+						name="type"
+						value="3"
+						checked={categoryType === 3}
+						on:change={handleTypeChange}
+					/>
+					<label for="Desserts">Desserts</label>
+				
 			</fieldset>
 
 			<fieldset class="labelsFieldset">
-				<legend style="text-align: left">Label
+				<legend style="text-align: left"
+					>Label
 					{#if errors.label}<p class="error">{errors.label}</p>{/if}
 				</legend>
 				<!-- Radio buttons for predefined labels -->
@@ -453,7 +460,7 @@
 		font-weight: lighter;
 		box-shadow: inset #d5b50295 0px 0px 7px;
 		max-width: 380px;
-		max-height: 80%;
+		max-height: 90%;
 		overflow-y: auto;
 		scrollbar-width: thin;
 		scrollbar-color: #ffffff66 rgba(232, 232, 232, 0.342) !important;
@@ -468,6 +475,7 @@
 
 	.typeFieldset {
 		display: flex;
+		position: relative;
 		gap: 10px;
 		padding: 0px 0px;
 		padding-bottom: 10px;
@@ -612,10 +620,11 @@
 
 	.imgLabel {
 		display: flex;
-		width: 100%;
+		width: 70%;
 		justify-content: center;
 		align-items: center;
 		height: auto;
+		margin: auto;
 	}
 
 	.imgPreview {
@@ -638,7 +647,7 @@
 		justify-content: center;
 		align-items: center;
 		position: relative;
-		width: 70%;
+		width: 100%;
 		margin: 5px 0px;
 		box-sizing: content-box;
 		cursor: pointer;
@@ -660,7 +669,7 @@
 		justify-content: center;
 	}
 
-	.error{
+	.error {
 		color: red;
 		font-size: 1.2rem;
 		margin-top: -5px;

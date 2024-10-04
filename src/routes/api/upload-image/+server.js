@@ -7,12 +7,17 @@ export const POST = async ({ request }) => {
     const formData = await request.formData();
     const file = formData.get('file');
 
-    if (!file) {
-      return new Response('No file provided', { status: 400 });
+    if (!file || !file.name) {
+      return new Response('No valid file provided', { status: 400 });
     }
 
     if (!process.env.BLOB_READ_WRITE_TOKEN) {
       return new Response('Token not found', { status: 500 });
+    }
+
+    // Add check to ensure the file has a proper extension
+    if (!file.name.toLowerCase().endsWith('.jpg') && !file.name.toLowerCase().endsWith('.jpeg') && !file.name.toLowerCase().endsWith('.png')) {
+      return new Response('Unsupported file format. Only JPG, JPEG, and PNG files are allowed.', { status: 400 });
     }
 
     const { url } = await put(file.name, file, {
@@ -32,4 +37,3 @@ export const POST = async ({ request }) => {
     return new Response('Failed to upload file', { status: 500 });
   }
 };
-

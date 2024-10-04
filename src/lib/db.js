@@ -1,35 +1,27 @@
-import pkg from 'pg';
+// @ts-nocheck
+import { createPool } from '@vercel/postgres';  // Use @vercel/postgres for pooling
+import { del } from '@vercel/blob';             // Vercel Blob delete API
 import dotenv from 'dotenv';
 
-dotenv.config();
+dotenv.config(); // Load environment variables
 
-const { Client } = pkg;
+// Get POSTGRES_URL from environment variables
+import { POSTGRES_URL } from '$env/static/private';
 
-const client = new Client({
-  connectionString: process.env.POSTGRES_URL,
+// Create a connection pool
+const pool = createPool({
+  connectionString: POSTGRES_URL,
   ssl: {
-    rejectUnauthorized: false
+    rejectUnauthorized: false  // Optional: Adjust SSL config if needed
   }
 });
 
-client.connect()
-  .then(() => console.log('Connected to PostgreSQL database'))
-  .catch(err => console.error('Connection error', err.stack));
+// Export the pool for reuse
+export { pool };
 
-export default client;
-
-
-import { createPool } from '@vercel/postgres';
-import { POSTGRES_URL } from '$env/static/private';
-
-// Create a pool to reuse connections
-const pool = createPool({
-    connectionString: POSTGRES_URL
-});
-
-// Define a function to get food items
+// Function to get food items
 export async function getFoodItems() {
-    const client = await pool.connect();
+    const client = await pool.connect();  // Use pool connection
 
     try {
         const { rows } = await client.query(`
@@ -47,7 +39,6 @@ export async function getFoodItems() {
             ORDER BY food.date_added DESC
         `);
         
-        // Map the result and return as a simple array
         return rows.map(row => ({
             id: row.id,
             name: row.name,
@@ -58,6 +49,109 @@ export async function getFoodItems() {
             category_name: row.category_name
         }));
     } finally {
+        client.release();  // Properly release the client back to the pool
+    }
+}
+
+// Function to delete a food item by its ID
+export async function deleteFoodItemById(id) {
+    const client = await pool.connect();  // Use pool connection
+
+    try {
+        // Retrieve the image URL before deleting the record
+        const { rows } = await client.query(`
+            SELECT image_url 
+            FROM food 
+            WHERE id = $1
+        `, [id]);
+
+        if (rows.length === 0) {
+            throw new Error('Food item not found');
+        }
+
+        const imageUrl = rows[0].image_url;
+
+        // Log the image URL to check its format
+        console.log('Image URL:', imageUrl);
+
+        // Delete the image from Vercel Blob
+        await del(imageUrl, {
+            token: process.env.BLOB_READ_WRITE_TOKEN  // Ensure this token is set in your .env
+        });
+
+        // Delete the food item from the database
+        await client.query(`
+            DELETE FROM food 
+            WHERE id = $1
+        `, [id]);
+
+        return { success: true };
+    } catch (error) {
+        console.error('Failed to delete food item:', error);
+        throw error;
+    } finally {
+        client.release();  // Properly release the client back to the pool
+    }
+}
+
+
+// Function to get the old image URL before replacing it
+export async function getOldImageUrl(id) {
+    const client = await pool.connect();
+
+    try {
+        const { rows } = await client.query(`SELECT image_url FROM food WHERE id = $1`, [id]);
+        return rows[0]?.image_url || null; // Return the old image URL or null if not found
+    } catch (error) {
+        console.error('Failed to fetch old image URL:', error);
+        throw error;
+    } finally {
         client.release();
     }
+}
+
+// Function to update food item data, including replacing the image URL
+export async function patchFoodItem(id, updateData) {
+    const client = await pool.connect();
+    const { name, label, description, categoryType, imageUrl } = updateData;
+
+    const updateFields = [];
+    const updateValues = [];
+    let queryIndex = 1;
+
+    if (name) {
+        updateFields.push(`name = $${queryIndex++}`);
+        updateValues.push(name);
+    }
+
+    if (label) {
+        updateFields.push(`label = $${queryIndex++}`);
+        updateValues.push(label);
+    }
+
+    if (description) {
+        updateFields.push(`description = $${queryIndex++}`);
+        updateValues.push(description);
+    }
+
+    if (categoryType) {
+        updateFields.push(`category_id = $${queryIndex++}`);
+        updateValues.push(categoryType);
+    }
+
+    if (imageUrl) {
+        updateFields.push(`image_url = $${queryIndex++}`);
+        updateValues.push(imageUrl);
+    }
+
+    if (updateFields.length > 0) {
+        const updateQuery = `
+            UPDATE food
+            SET ${updateFields.join(', ')}
+            WHERE id = $${queryIndex}
+        `;
+        await client.query(updateQuery, [...updateValues, id]);
+    }
+
+    return { success: true };
 }

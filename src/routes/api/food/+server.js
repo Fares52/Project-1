@@ -2,6 +2,7 @@
 import { getFoodItems } from '$lib/db';
 import { json } from '@sveltejs/kit';
 
+
 export async function GET() {
     try {
         const items = await getFoodItems();
