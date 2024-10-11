@@ -14,7 +14,8 @@
 	let showForm = true; // Control visibility of the form
 
 	onMount(() => {
-		// Optional: you can set a delay or any other logic if needed
+		let vh = window.innerHeight * 0.01;
+		document.documentElement.style.setProperty('--vh', `${vh}px`);
 	});
 
 	// Watch for changes in username and password and clear the error message
@@ -45,10 +46,6 @@
 		}
 	};
 
-	window.addEventListener('resize', () => {
-		let vh = window.innerHeight * 0.01;
-		document.documentElement.style.setProperty('--vh', `${vh}px`);
-	});
 </script>
 
 <!-- @component 
