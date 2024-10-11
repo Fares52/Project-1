@@ -163,4 +163,11 @@
 		opacity: 0.7;
 		transition: 0.1s linear;
 	}
+
+	@media only screen and (max-width: 800px) {
+		
+	}
+
+
+	
 </style>

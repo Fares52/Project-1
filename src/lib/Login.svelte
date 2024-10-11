@@ -193,4 +193,52 @@
 		color: rgba(255, 0, 0, 0.53);
 		margin: auto;
 	}
+
+	@media only screen and (max-width: 800px) {
+		h1 {
+			font-size: 7.5rem;
+		}
+
+		h2 {
+			font-size: 4.5rem;
+		}
+		h2 span {
+			font-size: 3.5rem;
+		}
+
+		form {
+			max-height: 310px;
+		}
+	}
+
+	@media only screen and (max-width: 600px) {
+		h1 {
+			font-size: 6.5rem;
+		}
+		form{
+			width: 400px;
+			max-height: 300px;
+		}
+	}
+
+	@media only screen and (max-width: 500px) {
+		h1 {
+			font-size: 5.5rem;
+		}
+	}
+
+	@media only screen and (max-width: 450px) {
+		h1 {
+			font-size: 4.5rem;
+		}
+		h2 {
+			font-size: 3.5rem;
+		}
+		h2 span {
+			font-size: 2.5rem;
+		}
+		form{
+			width: 300px;
+		}
+	}
 </style>
