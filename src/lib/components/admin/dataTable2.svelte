@@ -60,21 +60,24 @@
 <section>
 	<div class="tableContainer">
 		<div class="category-buttons">
-			<button
-				class="categoryButton {selectedCategory === 'Entrees' ? 'active' : ''}"
-				on:click={() => selectCategory('Entrees')}>Entrees</button
-			>
-			<button
-				class="categoryButton {selectedCategory === 'Plats' ? 'active' : ''}"
-				on:click={() => selectCategory('Plats')}>Plats</button
-			>
-			<button
-				class="categoryButton {selectedCategory === 'Desserts' ? 'active' : ''}"
-				on:click={() => selectCategory('Desserts')}>Desserts</button
-			>
-
-			<AddButton />
-			<RefreshData on:refresh={handleRefresh} />
+			<div class="categoryButtonDiv">
+				<button
+					class="categoryButton {selectedCategory === 'Entrees' ? 'active' : ''}"
+					on:click={() => selectCategory('Entrees')}>Entrees</button
+				>
+				<button
+					class="categoryButton {selectedCategory === 'Plats' ? 'active' : ''}"
+					on:click={() => selectCategory('Plats')}>Plats</button
+				>
+				<button
+					class="categoryButton {selectedCategory === 'Desserts' ? 'active' : ''}"
+					on:click={() => selectCategory('Desserts')}>Desserts</button
+				>
+			</div>
+			<div class="addRefreshDiv">
+				<RefreshData on:refresh={handleRefresh} />
+				<AddButton />
+			</div>
 		</div>
 
 		<!-- Check if data exists and display table -->
@@ -97,7 +100,7 @@
 							<th scope="row">{item.id}</th>
 							<td>{item.name}</td>
 							<td>{item.label}</td>
-							<td>{item.description}</td>
+							<td class="descriptionTd">{item.description}</td>
 							<td><img src={item.image_url} alt={`Image for ${item.name}`} /></td>
 							<td>
 								{new Intl.DateTimeFormat('fr-FR', {
@@ -112,7 +115,14 @@
 							</td>
 							<td>
 								<div class="actionButtonsDiv">
-									<EditButton itemId={item.id} categoryType={item.category_name} itemName={item.name} itemLabel={item.label} itemDescription={item.description} itemImage={item.image_url} />
+									<EditButton
+										itemId={item.id}
+										categoryType={item.category_name}
+										itemName={item.name}
+										itemLabel={item.label}
+										itemDescription={item.description}
+										itemImage={item.image_url}
+									/>
 									<DeleteButton itemId={item.id} itemName={item.name} />
 									<VisibilityButton itemId={item.id} visible={item.visible} />
 								</div>
@@ -128,6 +138,9 @@
 </section>
 
 <style>
+	* {
+		box-sizing: content-box;
+	}
 	section {
 		height: fit-content;
 		width: 90vw;
@@ -136,11 +149,13 @@
 		border-radius: 5px;
 		margin: 20px auto;
 		padding: 20px;
+		overflow: hidden;
+		box-sizing: border-box;
 	}
 
 	.tableContainer {
 		min-width: 50vw;
-		max-height: 78vh;
+		height: 78vh;
 	}
 
 	table {
@@ -152,9 +167,9 @@
 		box-sizing: border-box;
 		border-spacing: 0px;
 		/* border-radius: 5px; */
-		width: fit-content;
-		height: 500px;
-		overflow-y: scroll;
+		width: 100%;
+		height: 90%;
+		overflow: auto;
 		display: block;
 		scrollbar-width: thin;
 	}
@@ -170,6 +185,9 @@
 		max-width: 250px;
 		line-break: auto;
 		overflow: hidden;
+	}
+	.descriptionTd {
+		min-width: 250px;
 	}
 	thead {
 		color: #623e2a;
@@ -205,7 +223,7 @@
 	.category-buttons {
 		position: relative;
 		display: flex;
-		gap: 10px;
+		justify-content: space-between;
 	}
 	.categoryButton {
 		border: none;
@@ -237,5 +255,54 @@
 	} */
 	.actionButtonsDiv {
 		display: flex;
+	}
+
+	.addRefreshDiv {
+		display: flex;
+		gap: 10px;
+		align-items: center;
+	}
+
+	@media only screen and (max-width: 560px) {
+		thead {
+			font-size: 1.7rem;
+		}
+		thead th {
+			padding: 3px;
+		}
+		table {
+			font-size: 1.3rem;
+		}
+		table th {
+			padding: 3px;
+		}
+		table td {
+			padding: 3px;
+		}
+		td:has(img) {
+			padding: 5px;
+		}
+		td img {
+			width: 135px;
+		}
+		.actionButtonsDiv {
+			scale: 0.8;
+		}
+		.categoryButton {
+			font-size: 2.1rem;
+		}
+	}
+
+	@media only screen and (max-width: 400px) {
+		.addRefreshDiv{
+			justify-content: center;
+		}
+		.category-buttons {
+		display: flex;
+		flex-direction: column;
+	}
+	table{
+		margin-top: 5px;
+	}
 	}
 </style>

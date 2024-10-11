@@ -101,6 +101,7 @@
 
 	* {
 		z-index: 2;
+		box-sizing: content-box;
 	}
 
 	.container {
@@ -164,10 +165,10 @@
 		transition: 0.1s linear;
 	}
 
-	@media only screen and (max-width: 800px) {
-		
+	@media only screen and (max-width: 560px) {
+		.logoutButton {
+			margin-right: 15px;
+			flex-direction: column;
+		}
 	}
-
-
-	
 </style>

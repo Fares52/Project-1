@@ -210,7 +210,7 @@
 			d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,176H48V48H208V208Zm-32-80a8,8,0,0,1-8,8H136v32a8,8,0,0,1-16,0V136H88a8,8,0,0,1,0-16h32V88a8,8,0,0,1,16,0v32h32A8,8,0,0,1,176,128Z"
 		></path>
 	</svg>
-	Add New
+	<span>Add New</span>
 </button>
 
 {#if isDialogOpen}
@@ -230,40 +230,40 @@
 			<!-- {#if errors.description}<p class="error">{errors.description}</p>{/if} -->
 
 			<fieldset class="typeFieldset">
-				<legend style="text-align: start;">Type
-				{#if errors.categoryType}
-					<p class="error">{errors.categoryType}</p>
-				{/if}
-			</legend>
-				
-					<input
-						type="radio"
-						id="Entrees"
-						name="type"
-						value="1"
-						checked={categoryType === 1}
-						on:change={handleTypeChange}
-					/>
-					<label for="Entrees">Entrees</label>
-					<input
-						type="radio"
-						id="Plats"
-						name="type"
-						value="2"
-						checked={categoryType === 2}
-						on:change={handleTypeChange}
-					/>
-					<label for="Plats">Plats</label>
-					<input
-						type="radio"
-						id="Desserts"
-						name="type"
-						value="3"
-						checked={categoryType === 3}
-						on:change={handleTypeChange}
-					/>
-					<label for="Desserts">Desserts</label>
-				
+				<legend style="text-align: start;"
+					>Type
+					{#if errors.categoryType}
+						<p class="error">{errors.categoryType}</p>
+					{/if}
+				</legend>
+
+				<input
+					type="radio"
+					id="Entrees"
+					name="type"
+					value="1"
+					checked={categoryType === 1}
+					on:change={handleTypeChange}
+				/>
+				<label for="Entrees">Entrees</label>
+				<input
+					type="radio"
+					id="Plats"
+					name="type"
+					value="2"
+					checked={categoryType === 2}
+					on:change={handleTypeChange}
+				/>
+				<label for="Plats">Plats</label>
+				<input
+					type="radio"
+					id="Desserts"
+					name="type"
+					value="3"
+					checked={categoryType === 3}
+					on:change={handleTypeChange}
+				/>
+				<label for="Desserts">Desserts</label>
 			</fieldset>
 
 			<fieldset class="labelsFieldset">
@@ -372,9 +372,6 @@
 <style>
 	/* Button styling */
 	.addButton {
-		position: absolute;
-		right: 0px;
-		bottom: 6.6px;
 		color: #623e2a;
 		background-color: #ebe1d2;
 		display: flex;
@@ -694,5 +691,17 @@
 	button[type='submit']:hover {
 		color: #ebe1d2;
 		background-color: #623e2a;
+	}
+
+	@media only screen and (max-width: 560px) {
+		.addButton span {
+			font-size: 1.2rem;
+		}
+	}
+
+	@media only screen and (max-width: 460px) {
+		.addButton span {
+			display: none;
+		}
 	}
 </style>
