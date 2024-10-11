@@ -142,7 +142,8 @@
 		box-sizing: content-box;
 	}
 	section {
-		height: fit-content;
+		height: 85%;
+		position: relative;
 		width: 90vw;
 		background-color: white;
 		border: #ebe1d2 3px solid;
@@ -155,7 +156,8 @@
 
 	.tableContainer {
 		min-width: 50vw;
-		height: 78vh;
+		/* max-height: 78vh; */
+		height: 100%;
 	}
 
 	table {
@@ -286,8 +288,9 @@
 			width: 135px;
 		}
 		.actionButtonsDiv {
-			scale: 0.8;
+		gap: 5px;
 		}
+		
 		.categoryButton {
 			font-size: 2.1rem;
 		}
