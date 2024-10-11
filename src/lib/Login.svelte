@@ -44,6 +44,11 @@
 			console.log(error);
 		}
 	};
+
+	window.addEventListener('resize', () => {
+		let vh = window.innerHeight * 0.01;
+		document.documentElement.style.setProperty('--vh', `${vh}px`);
+	});
 </script>
 
 <!-- @component 
@@ -80,7 +85,7 @@
 	.transition {
 		display: flex;
 		flex-direction: column;
-		height: 100vh;
+		height: calc(var(--vh) - 50px); /* Example offset for headers/footers */
 		justify-content: center;
 		align-items: center;
 	}
@@ -125,6 +130,7 @@
 		height: 40%;
 		justify-content: space-between;
 		text-shadow: none;
+		min-height: 300px;
 	}
 
 	.labelDiv {
@@ -215,9 +221,10 @@
 		h1 {
 			font-size: 6.5rem;
 		}
-		form{
+		form {
 			width: 400px;
 			max-height: 300px;
+			min-height: 300px;
 		}
 	}
 
@@ -237,7 +244,7 @@
 		h2 span {
 			font-size: 2.5rem;
 		}
-		form{
+		form {
 			width: 300px;
 		}
 	}
