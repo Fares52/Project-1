@@ -345,7 +345,7 @@
 
 			<!-- Image Upload Field -->
 			{#if errors.imageUrl}<p class="error">{errors.imageUrl}</p>{/if}
-			<label for="image_url" class="imgLabel">
+			<label for="image_url" class="imgLabel" onclick="document.getElementById('image_url').click();">
 				<!-- Preview the image if selected -->
 				<p class="imgPreviewBox">
 					{#if imagePreviewUrl}
