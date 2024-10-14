@@ -337,7 +337,7 @@
 						Image
 					{/if}
 				</p>
-				<input type="file" id="image_url" on:change={handleFileChange} style="display: none;" />
+				<input type="file" id="image_url" accept="image/*" capture="environment" on:change={handleFileChange} style="display: none;" />			
 			</label>
 
 			{#if !showUploadButton}
@@ -493,7 +493,7 @@
 		font-weight: normal;
 		transition: 0.3s ease-in-out all;
 		/* border: 2px solid transparent; */
-		box-shadow: inset #623e2a00 0px 0px 7px;
+		box-shadow: inset #623e2a45 0px 0px 7px;
 	}
 
 	.typeFieldset input[type='radio']:checked + label {
