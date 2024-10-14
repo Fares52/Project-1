@@ -5,6 +5,9 @@
 	import { fade } from 'svelte/transition';
 	import { createEventDispatcher } from 'svelte';
 
+	//there was a bug when taking a photo using the camera if the photo was larger than 4.5MB the image wont upload
+	import imageCompression from 'browser-image-compression';
+
 	let isDialogOpen = false;
 	let label = '';
 	let imageUrl = '';
@@ -67,23 +70,41 @@
 	}
 
 	async function handleFileChange(event) {
-		if (!event || !event.target || !event.target.files) return;
-		selectedFile = event.target.files[0];
+		const file = event.target.files[0];
 
-		// Create a preview of the selected image
-		if (selectedFile) {
-			imagePreviewUrl = URL.createObjectURL(selectedFile);
-			showUploadButton = true;
+		if (file) {
+			const options = {
+				maxSizeMB: 2.5, // Adjust size
+				maxWidthOrHeight: 1920, // Adjust dimensions
+				useWebWorker: true
+			};
+
+			try {
+				const compressedFile = await imageCompression(file, options);
+				selectedFile = compressedFile;
+				imagePreviewUrl = URL.createObjectURL(compressedFile);
+				showUploadButton = true;
+
+				console.log(`File size after compression: ${compressedFile.size} bytes`);
+			} catch (error) {
+				console.error('Error compressing image:', error);
+			}
 		}
 	}
 
 	async function handleUpload() {
 		if (!selectedFile) {
 			alert('Please select a file first.');
-			return;
+			return null;
 		}
+		isUploading = true; // Reset loading state
 
-		isUploading = true; // Set loading state
+		// Check for valid image formats (optional, as you already validated it before)
+		// const allowedFormats = ['image/jpeg', 'image/jpg', 'image/png'];
+		// if (!allowedFormats.includes(selectedFile.type)) {
+		//     alert('Unsupported file format. Please upload JPG or PNG.');
+		//     return null;
+		// }
 
 		try {
 			const formData = new FormData();
@@ -99,18 +120,14 @@
 			}
 
 			const data = await response.json();
-			if (!data.uploaded) {
-				throw new Error('Invalid response from server.');
-			}
-
 			imageUrl = data.uploaded;
 			uploadStatus = 'Upload successful!';
 			showUploadButton = false;
 			isUploading = false; // Reset loading state
+			return data.uploaded; // Return the uploaded URL
 		} catch (error) {
 			console.error('Error uploading file:', error);
-			uploadStatus = 'Upload failed. Please try again.';
-			isUploading = false; // Reset loading state
+			return null;
 		}
 	}
 
@@ -337,7 +354,14 @@
 						Image
 					{/if}
 				</p>
-				<input type="file" id="image_url" accept="image/*" capture="environment" on:change={handleFileChange} style="display: none;" />			
+				<input
+					type="file"
+					id="image_url"
+					accept="image/png, image/jpeg"
+					capture="environment"
+					on:change={handleFileChange}
+					style="display: none;"
+				/>
 			</label>
 
 			{#if !showUploadButton}
