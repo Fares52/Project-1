@@ -350,6 +350,9 @@
 	}
 
 	@media only screen and (max-width: 560px) {
+		.card {
+			width: 230px;
+		}
 		.categoryButton {
 			font-size: 2.1rem;
 		}
