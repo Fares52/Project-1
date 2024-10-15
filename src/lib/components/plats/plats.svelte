@@ -94,6 +94,7 @@
 		overflow-x: auto;
 		scrollbar-width: thin;
 		padding: 0px 20px;
+padding-bottom: 5px;
 		/* padding-bottom: 1vw; */
 		scrollbar-color: #623e2a transparent;
 		box-sizing: border-box;
@@ -161,7 +162,9 @@
 
 	.cardInfo:focus-within .discription {
 		display: flex;
-		height: 80px;
+		height: fit-content;
+		min-height: 20px;
+		max-height: 130px;
 		transition: all ease-in-out 0.35s;
 		padding: 10px;
 	}

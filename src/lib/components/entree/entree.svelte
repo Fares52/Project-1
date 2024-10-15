@@ -94,6 +94,7 @@
 		overflow-x: auto;
 		scrollbar-width: thin;
 		padding: 0px 20px;
+padding-bottom: 5px;
 		/* padding-bottom: 1vw; */
 		scrollbar-color: #623e2a transparent;
 		box-sizing: border-box;
