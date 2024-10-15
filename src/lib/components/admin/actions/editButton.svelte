@@ -77,9 +77,9 @@
 
 		// Map categoryType back to integers for database
 		const categoryMap = {
-			"Entrees": 1,
-			"Plats": 2,
-			"Desserts": 3
+			Entrees: 1,
+			Plats: 2,
+			Desserts: 3
 		};
 
 		if (updateData.categoryType in categoryMap) {
@@ -164,6 +164,7 @@
 		}
 	}
 </script>
+
 <!-- TODO: verify that modify does indeed compress images. -->
 <!-- Edit button -->
 <button class="editButton" on:click={openDialog}>
@@ -198,11 +199,29 @@
 			<!-- Category type -->
 			<fieldset class="typeFieldset">
 				<legend>Type</legend>
-				<input type="radio" id="Entrees" name="type" value="Entrees" bind:group={formData.categoryType} />
+				<input
+					type="radio"
+					id="Entrees"
+					name="type"
+					value="Entrees"
+					bind:group={formData.categoryType}
+				/>
 				<label for="Entrees">Entrees</label>
-				<input type="radio" id="Plats" name="type" value="Plats" bind:group={formData.categoryType} />
+				<input
+					type="radio"
+					id="Plats"
+					name="type"
+					value="Plats"
+					bind:group={formData.categoryType}
+				/>
 				<label for="Plats">Plats</label>
-				<input type="radio" id="Desserts" name="type" value="Desserts" bind:group={formData.categoryType}/>
+				<input
+					type="radio"
+					id="Desserts"
+					name="type"
+					value="Desserts"
+					bind:group={formData.categoryType}
+				/>
 				<label for="Desserts">Desserts</label>
 			</fieldset>
 			<!-- Label -->
@@ -236,7 +255,15 @@
 						<p class="onImageText">Click to change image</p>
 					{/if}
 				</div>
-				<input type="file" id="image_url" on:change={handleFileChange} style="display: none;" />
+
+				<input
+					type="file"
+					id="image_url"
+					accept="image/png, image/jpeg"
+					capture="environment"
+					on:change={handleFileChange}
+					style="display: none;"
+				/>
 			</label>
 
 			<!-- Upload image button -->
