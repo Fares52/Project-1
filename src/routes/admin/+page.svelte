@@ -109,6 +109,8 @@
 		min-height: 100vh;
 		overflow-y: auto;
 		overflow-x: hidden;
+		display: flex;
+		flex-direction: column;
 		/* background-color: #f4f1ed; */
 	}
 
@@ -120,6 +122,7 @@
 		justify-content: center;
 		padding: 7px;
 		position: relative;
+		top: 0px;
 	}
 	nav h1 {
 		font-family: ITCAvantGardeStd;

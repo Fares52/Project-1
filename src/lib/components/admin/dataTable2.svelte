@@ -174,7 +174,7 @@
 		background-color: #ffffff9a;
 		border: #d6b78599 1.5px solid;
 		border-radius: 5px;
-		margin: 20px auto;
+		margin: auto;
 		padding: 20px;
 		overflow: hidden;
 		box-sizing: border-box;
