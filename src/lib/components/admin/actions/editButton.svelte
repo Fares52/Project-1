@@ -1,6 +1,7 @@
 <script>
 	// @ts-nocheck
 	import { fade } from 'svelte/transition';
+	import imageCompression from 'browser-image-compression'; // Import image compression library
 
 	export let itemId; // ID of the food item to edit
 	export let itemName; // Name of the food item (for display in the dialog)
@@ -16,7 +17,7 @@
 	let showUploadButton = false; // Track if the upload button should be visible
 	let imagePreviewUrl = itemImage; // Set the initial image preview to the existing image URL
 	let uploadStatus = ''; // To display the status of the image upload
-	let isUploading = false; // Declare isUploading for upload button state
+	let isUploading = false; // Track image upload state
 
 	// Form data bound to input fields
 	let formData = {
@@ -27,16 +28,14 @@
 	};
 
 	// Open the edit dialog
-	// Ensure formData is correctly populated when the dialog is opened
 	function openDialog() {
 		formData = {
 			name: itemName,
 			label: itemLabel,
 			description: itemDescription,
-			categoryType: categoryType // Ensure it starts with the correct string category
+			categoryType: categoryType
 		};
-		console.log('Form Data on Open:', formData);
-		isDialogOpen = true; // Open the dialog
+		isDialogOpen = true;
 	}
 
 	// Close the edit dialog
@@ -44,15 +43,28 @@
 		isDialogOpen = false;
 	}
 
-	// Handle the change of image selection
-	function handleFileChange(event) {
-		selectedFile = event.target.files[0];
+	// Handle the change of image selection and compress image before uploading
+	async function handleFileChange(event) {
+		const file = event.target.files[0];
 
-		// Create a preview of the selected image
-		if (selectedFile) {
-			imagePreviewUrl = URL.createObjectURL(selectedFile);
-			isImageChanged = true;
-			showUploadButton = true; // Show the upload button when the image changes
+		if (file) {
+			// Compress the image before storing it
+			const options = {
+				maxSizeMB: 2.5, // Maximum file size
+				maxWidthOrHeight: 1920, // Max dimension of the image
+				useWebWorker: true // Speed up compression
+			};
+
+			try {
+				// Compress the image
+				const compressedFile = await imageCompression(file, options);
+				selectedFile = compressedFile; // Store the compressed file
+				imagePreviewUrl = URL.createObjectURL(compressedFile); // Update image preview
+				isImageChanged = true;
+				showUploadButton = true; // Show the upload button
+			} catch (error) {
+				console.error('Error compressing image:', error);
+			}
 		}
 	}
 
@@ -61,7 +73,6 @@
 		event.preventDefault();
 		loading = true;
 
-		// Create a copy of formData to modify
 		const updateData = { ...formData };
 
 		// Map categoryType back to integers for database
@@ -71,7 +82,6 @@
 			"Desserts": 3
 		};
 
-		// Convert categoryType to its corresponding integer before submitting
 		if (updateData.categoryType in categoryMap) {
 			updateData.categoryType = categoryMap[updateData.categoryType];
 		}
@@ -88,8 +98,8 @@
 			}
 		}
 
+		// Send the updated data to the server
 		try {
-			// Send the updated data to the server
 			const response = await fetch(`/api/food/${itemId}`, {
 				method: 'PATCH',
 				body: JSON.stringify(updateData),
@@ -109,21 +119,20 @@
 		}
 	}
 
-	// Handle the image upload to the server
+	// Handle image upload to the server
 	async function handleUpload() {
 		if (!selectedFile) {
 			alert('Please select a file first.');
 			return null;
 		}
 
-		// Check for valid image formats
 		const allowedFormats = ['image/jpeg', 'image/jpg', 'image/png'];
 		if (!allowedFormats.includes(selectedFile.type)) {
 			alert('Unsupported file format. Please upload JPG or PNG.');
 			return null;
 		}
 
-		isUploading = true; // Set loading state
+		isUploading = true; // Set uploading state
 
 		try {
 			const formData = new FormData();
@@ -145,24 +154,17 @@
 
 			uploadStatus = 'Upload successful!';
 			showUploadButton = false;
-			isUploading = false; // Reset loading state
+			isUploading = false;
 			return data.uploaded; // Return the new image URL
 		} catch (error) {
 			console.error('Error uploading file:', error);
 			uploadStatus = 'Upload failed. Please try again.';
-			isUploading = false; // Reset loading state
-			return null; // Return null if the upload fails
+			isUploading = false;
+			return null;
 		}
 	}
 </script>
-
-<!-- @component
-## Edit button 
-
-
-
--->
-
+<!-- TODO: verify that modify does indeed compress images. -->
 <!-- Edit button -->
 <button class="editButton" on:click={openDialog}>
 	<svg
