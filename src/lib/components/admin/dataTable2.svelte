@@ -98,7 +98,7 @@
 		{#if data.length > 0}
 			<div class="dataContainer">
 				{#each getItemsByCategory(selectedCategory) as item}
-					<div class="card {item.visible ? 'visible' : 'hidden'}">
+					<div class="card">
 						<div class="cardHeader">
 							<h3 class="id">
 								{item.id}
@@ -115,8 +115,8 @@
 								}).format(new Date(item.date_added))}
 							</h3>
 						</div>
-						<img class="foodPic" src={item.image_url} alt={`Image for ${item.name}`} />
-						<div class="cardInfo" role="button" tabindex="0">
+						<img class="foodPic {item.visible ? 'visible' : 'hidden'}" src={item.image_url} alt={`Image for ${item.name}`} />
+						<div class="cardInfo {item.visible ? 'visible' : 'hidden'}" role="button" tabindex="0">
 							<p>{item.label}</p>
 							<h2>{item.name}</h2>
 							<p>price goes here</p>
