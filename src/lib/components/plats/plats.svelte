@@ -162,13 +162,11 @@ padding-bottom: 5px;
 
 	.cardInfo:focus-within .discription {
 		display: flex;
-		height: fit-content;
-		min-height: 20px;
-		max-height: 130px;
+		height: 80px;
 		transition: all ease-in-out 0.35s;
 		padding: 10px;
 	}
-
+	
 	.cardInfo:focus-within .arrowSVG {
 		/* rotate: -180deg; */
 		transform: scale(1, -1);
