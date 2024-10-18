@@ -119,7 +119,7 @@
 						<div class="cardInfo {item.visible ? 'visible' : 'hidden'}" role="button" tabindex="0">
 							<p>{item.label}</p>
 							<h2>{item.name}</h2>
-							<p>price goes here</p>
+							<p>price</p>
 							<svg
 								class="arrowSVG"
 								xmlns="http://www.w3.org/2000/svg"
